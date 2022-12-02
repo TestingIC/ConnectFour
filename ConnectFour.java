@@ -103,7 +103,7 @@ class ConnectFour
                 System.out.println("Checkers to the right: " + checkers_to_the_right);
 
                 int checkers_to_the_left = 0;
-                for (int column = column_the_checker_was_droppped_in - 1; column > 0; column--) //Checks for checers to the left
+                for (int column = column_the_checker_was_droppped_in - 1; column >= 0; column--) //Checks for checers to the left
                 {
                     if (board[row][column] == checker_to_check_for)
                     {
