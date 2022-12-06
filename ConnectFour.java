@@ -56,7 +56,12 @@ class ConnectFour
 
     public static char[][] drop_checker(char[][] board, int column, char checker)
     {
-        for (int row = 0; row < board.length; row++)
+        if (board[0][column] != '_') //Check if the column is filled first
+        {
+            return board;
+        }
+
+        for (int row = 0; row < board.length; row++) //Drop from the top
         {
             if (row == board.length - 1 || board[row+1][column] != '_')
             {
