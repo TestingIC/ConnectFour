@@ -80,18 +80,12 @@ class ConnectFour
         //For the highest checker in the column, check all 8 surrounding positions and connect cardinal/diagonal connections
         for (int row = 0; row < board.length; row++)
         {
-            if (board[row][column_the_checker_was_droppped_in] != '_' && row != (board.length - 1)) //Hit another checker below
-            {
-                char checker_to_check_for = board[row][column_the_checker_was_droppped_in];
-
-                return highest_connection;
-            }
-            else if (row == (board.length - 1)) // Hit the bottom of the board
+            if (row == board.length - 1 || board[row][column_the_checker_was_droppped_in] != '_') //Hit another checker below
             {
                 char checker_to_check_for = board[row][column_the_checker_was_droppped_in];
                 
                 int checkers_to_the_right = 0;
-                for (int column = column_the_checker_was_droppped_in + 1; column < board[0].length; column++) //Checks for checers to the right
+                for (int column = column_the_checker_was_droppped_in + 1; column < board[0].length; column++) //Checks for checkers to the right
                 {
                     if (board[row][column] == checker_to_check_for)
                     {
@@ -117,8 +111,6 @@ class ConnectFour
                     }
                 }
                 System.out.println("Checkers to the left: " + checkers_to_the_left);
-
-                
                 
                 //Combine connnections
 
