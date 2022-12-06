@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.Arrays;
+import java.util.Random;
 
 class ConnectFour
 {
@@ -13,10 +15,26 @@ class ConnectFour
         while (play_again == 'Y')
         {
             print_board(board);
-            System.out.print("Type a number between 0 and 6, this is the column where the cheker will be dropped: ");
+            System.out.print("Type a number between 0 and 6, this is the column where the checker will be dropped: ");
             int column_to_drop_checker_in = Integer.parseInt(player_input.nextLine());
             drop_checker(board, column_to_drop_checker_in, 'X');
-            System.out.println("Highest number of connnections: " + check_connections(board, column_to_drop_checker_in));
+            if (check_connections(board, column_to_drop_checker_in) + 1 == 4) //Player win conditional
+            {
+                print_board(board);
+                System.out.println("The player has won!");
+                play_again = 'N';
+                break;
+            }
+
+            int best_bot_move = best_bot_move(board);
+            drop_checker(board, best_bot_move, 'O');
+            if (check_connections(board, best_bot_move) + 1 == 4) //Bot win conditional
+            {
+                print_board(board);
+                System.out.println("The bot has won!");
+                play_again = 'N';
+                break;
+            }
         }
 
     }
@@ -96,7 +114,7 @@ class ConnectFour
                         break;
                     }
                 }
-                System.out.println("Checkers to the right: " + checkers_to_the_right);
+                //System.out.println("Checkers to the right: " + checkers_to_the_right);
 
                 int checkers_to_the_left = 0;
                 for (int temp_column = column - 1; temp_column >= 0; temp_column--) //Checks for checkers to the left
@@ -110,7 +128,7 @@ class ConnectFour
                         break;
                     }
                 }
-                System.out.println("Checkers to the left: " + checkers_to_the_left);
+                //System.out.println("Checkers to the left: " + checkers_to_the_left);
                 
                 int checkers_below = 0;
                 if (row != board.length - 1) //Don't need to check for checkers below if we're at the bottom
@@ -127,7 +145,7 @@ class ConnectFour
                         }
                     }
                 }
-                System.out.println("Checkers below: " + checkers_below);
+                //System.out.println("Checkers below: " + checkers_below);
 
                 //Right up diagonal
 
@@ -142,13 +160,58 @@ class ConnectFour
         return highest_connection;
     }
 
-    public static int best_bot_move(char[][] boards)
+    public static int best_bot_move(char[][] board)
     {
-        return 4;
-    }
+        int[] ranking_of_moves = new int[7]; //Each index corresponds to a connection ranking
 
-    public static int worst_player_move(char[][] board)
-    {
-        return -4;
+        for (int column = 0; column < board.length; column++) //Fill ranking of moves
+        {
+            drop_checker(board, column, 'O');
+            ranking_of_moves[column] = check_connections(board, column);
+
+            //Undoes the O drop
+            for (int row = 0; row < board.length; row++) //Search from the top
+            {
+                if (row == board.length - 1 || board[row][column] == 'O')
+                {
+                    board[row][column] = '_';
+                    break;
+                }
+            }
+        }
+
+        int max_connection = 0;
+        for (int index = 0; index < board.length; index++) //Find the max connection
+        {
+            if (ranking_of_moves[index] > max_connection)
+            {
+                max_connection = ranking_of_moves[index];
+            }
+        }
+
+        int max_connection_count = 0;
+        for (int index = 0; index < board.length; index++) //How many times does the max count appear?
+        {
+            if (ranking_of_moves[index] == max_connection)
+            {
+                max_connection_count += 1;
+            }
+        }
+
+        int[] drop_columns = new int[max_connection_count];
+        int drop_columns_index = 0;
+        for (int index = 0; index < board.length; index++) //Find all of the eligible/best columns
+        {
+            if (ranking_of_moves[index] == max_connection)
+            {
+                drop_columns[drop_columns_index] = index;
+                drop_columns_index += 1;
+            }
+        }
+
+        Random random_generator = new Random();
+        int random_index = random_generator.nextInt(drop_columns.length);
+
+        return drop_columns[random_index];
     }
 }
