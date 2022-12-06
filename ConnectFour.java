@@ -16,7 +16,7 @@ class ConnectFour
             System.out.print("Type a number between 0 and 6, this is the column where the cheker will be dropped: ");
             int column_to_drop_checker_in = Integer.parseInt(player_input.nextLine());
             drop_checker(board, column_to_drop_checker_in, 'X');
-            check_connections(board, column_to_drop_checker_in);
+            System.out.println("Highest number of connnections: " + check_connections(board, column_to_drop_checker_in));
         }
 
     }
@@ -73,21 +73,21 @@ class ConnectFour
         return board;
     }
 
-    public static int check_connections(char[][] board, int column_the_checker_was_droppped_in)
+    public static int check_connections(char[][] board, int column)
     {
-        int highest_connection = 1; //Can range between 1 for no connecting checkers and 4 for a connect four
+        int highest_connection = 0; //Can range between 0 for no connecting checkers and 7 for filling an entire row/column/diagonal
 
         //For the highest checker in the column, check all 8 surrounding positions and connect cardinal/diagonal connections
         for (int row = 0; row < board.length; row++)
         {
-            if (row == board.length - 1 || board[row][column_the_checker_was_droppped_in] != '_') //Hit another checker below
+            if (row == board.length - 1 || board[row][column] != '_') //Hit another checker below
             {
-                char checker_to_check_for = board[row][column_the_checker_was_droppped_in];
+                char checker_to_check_for = board[row][column];
                 
                 int checkers_to_the_right = 0;
-                for (int column = column_the_checker_was_droppped_in + 1; column < board[0].length; column++) //Checks for checkers to the right
+                for (int temp_column = column + 1; temp_column < board[0].length; temp_column++) //Checks for checkers to the right
                 {
-                    if (board[row][column] == checker_to_check_for)
+                    if (board[row][temp_column] == checker_to_check_for)
                     {
                         checkers_to_the_right += 1;
                     }
@@ -99,9 +99,9 @@ class ConnectFour
                 System.out.println("Checkers to the right: " + checkers_to_the_right);
 
                 int checkers_to_the_left = 0;
-                for (int column = column_the_checker_was_droppped_in - 1; column >= 0; column--) //Checks for checkers to the left
+                for (int temp_column = column - 1; temp_column >= 0; temp_column--) //Checks for checkers to the left
                 {
-                    if (board[row][column] == checker_to_check_for)
+                    if (board[row][temp_column] == checker_to_check_for)
                     {
                         checkers_to_the_left += 1;
                     }
@@ -112,9 +112,30 @@ class ConnectFour
                 }
                 System.out.println("Checkers to the left: " + checkers_to_the_left);
                 
+                int checkers_below = 0;
+                if (row != board.length - 1) //Don't need to check for checkers below if we're at the bottom
+                {
+                    for (int temp_row = row + 1; temp_row < board.length; temp_row++)
+                    {
+                        if (board[temp_row][column] == checker_to_check_for)
+                        {
+                            checkers_below += 1;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                System.out.println("Checkers below: " + checkers_below);
+
+                //Right up diagonal
+
                 //Combine connnections
 
-                return highest_connection;
+                int horizontal_connections = checkers_to_the_left + checkers_to_the_right;
+
+                return Math.max(horizontal_connections, checkers_below);
             }
         }
 
